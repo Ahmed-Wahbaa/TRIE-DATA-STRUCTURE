@@ -47,8 +47,18 @@ private:
     // Output: none
     // Purpose: Free all dynamically allocated Trie nodes
     void deleteNodes(TrieNode* node) {
-        // TODO: Implement this function
+    if (node == nullptr) {
+        return;
     }
+
+    for (int i = 0; i < 26; i++) {
+        if (node->children[i] != nullptr) {
+            deleteNodes(node->children[i]);
+        }
+    }
+
+    delete node;
+}
 
     // Helper function to count words from a specific node
     // Input: current node
@@ -85,14 +95,15 @@ public:
     // Output: none
     // Purpose: Initialize the Trie with a root node
     Trie() {
-        // TODO: Implement this function
-    }
+    root = new TrieNode();
+    wordCount = 0;
+}
 
     // Destructor
     // Purpose: Free all dynamically allocated memory
     ~Trie() {
-        // TODO: Implement this function
-    }
+    deleteNodes(root);
+}
 
     // Insert a word into the Trie
     // Input: word to insert
