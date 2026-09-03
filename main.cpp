@@ -148,9 +148,19 @@ public:
     // Purpose: Find all complete words that begin with the given prefix
     vector<string> autocomplete(string prefix) {
         vector<string> suggestions;
-
-        // TODO: Implement this function
-
+        TrieNode *current = root;
+        int index = 0;
+        
+        for(int i = 0; i < prefix.length(); i++){            
+            index = prefix[i] - 'a';
+            if(current -> children[index] == nullptr){
+                //If any part of the prefix isn't found return the empty vector
+                return suggestions;
+            }
+            current = current -> children[index];
+        }
+        //Using the helper function that actually does all the work of finding the words and storing it in the passed vector
+        findAllWords(current, prefix, suggestions);
         return suggestions;
     }
 
@@ -245,9 +255,12 @@ public:
     // application
     vector<string> autocomplete(string prefix, int limit) {
         vector<string> suggestions;
-
-        // TODO: Implement this function
-
+        //the normal autocomplete function already has all the logic we are just going to truncate the resulting vector to the limit we want
+        suggestions = autocomplete(prefix);
+        //Only truncate the vector so it doesn't add empty slots into vector if the size < limit. This is also checks the edge case of if we got an empty vector from the autocomplete function
+        if(suggestions.size() > limit){
+            suggestions.resize(limit);
+        }
         return suggestions;
     }
 };
