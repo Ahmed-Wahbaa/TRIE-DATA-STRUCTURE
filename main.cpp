@@ -128,8 +128,18 @@ public:
     // Purpose: Verify if the prefix exists in the Trie
     //          (doesn't need to be a complete word)
     bool startsWith(string prefix) {
-        // TODO: Implement this function
-        return false; // placeholder
+        TrieNode *current = root;
+        int index = 0;
+
+        for(int i = 0; i < prefix.length(); i++){
+            index = prefix[i] - 'a';
+            if(current -> children[index] == nullptr){
+                return false;
+            }
+            current = current -> children[index];
+        }
+        return true;
+
     }
 
     // Get all words that start with the given prefix
