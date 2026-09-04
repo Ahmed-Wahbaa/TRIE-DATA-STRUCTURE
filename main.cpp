@@ -80,14 +80,52 @@ private:
     //
     // Purpose:
     // Remove the word while deleting unnecessary nodes
-    bool removeHelper(
-        TrieNode* node,
-        string word,
-        int index
-    ) {
-        // TODO: Implement this function
-        return false;
-    }
+	bool removeHelper(
+		TrieNode* node,
+		string word,
+		int index
+	) {
+		if (index == (int)word.length()) {
+			if (!node->isEndOfWord) {
+				return false;
+			}
+
+			node->isEndOfWord = false;
+
+			for (int i = 0; i < 26; i++) {
+				if (node->children[i] != nullptr) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		int idx = word[index] - 'a';
+
+		if (node->children[idx] == nullptr) {
+			return false;
+		}
+
+		bool shouldDeleteChild = removeHelper(node->children[idx], word, index + 1);
+
+		if (shouldDeleteChild) {
+			delete node->children[idx];
+			node->children[idx] = nullptr;
+		}
+
+		if (node->isEndOfWord) {
+			return false;
+		}
+
+		for (int i = 0; i < 26; i++) {
+			if (node->children[i] != nullptr) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 public:
     // Constructor
@@ -200,18 +238,21 @@ public:
     // Insert: "apple", "app"
     // Remove: "apple"
     // "app" should still exist
-    void remove(string word) {
-        // TODO: Implement this function
-    }
+	void remove(string word) {
+		bool wordExisted = search(word);
+		removeHelper(root, word, 0);
+		if (wordExisted) {
+			wordCount--;
+		}
+	}
 
     // Count the total number of words in the Trie
     // Input: none
     // Output: number of words
     // Purpose: Return how many unique complete words exist in the Trie
-    int countWords() {
-        // TODO: Implement this function
-        return 0;
-    }
+	int countWords() {
+		return wordCount;
+	}
 
     // Count how many words start with a given prefix
     // Input: prefix
@@ -254,18 +295,19 @@ public:
     // Input: none
     // Output: true if empty, false otherwise
     // Purpose: Check if the Trie has no stored words
-    bool isEmpty() {
-        // TODO: Implement this function
-        return true; // placeholder
-    }
+	bool isEmpty() {
+		return wordCount == 0;
+	}
 
     // Remove all words from the Trie
     // Input: none
     // Output: none
     // Purpose: Completely clear the Trie
-    void clear() {
-        // TODO: Implement this function
-    }
+	void clear() {
+		deleteNodes(root);
+		root = new TrieNode();
+		wordCount = 0;
+	}
 
     // Get autocomplete suggestions with a maximum limit
     // Input:
